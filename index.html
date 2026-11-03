@@ -1,0 +1,951 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SHADOW BOT | لوحة التحكم</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap');
+
+:root {
+  --bg: #190d29;
+  --purple: #32164d;
+  --purple2: #512477;
+  --red: #b51f35;
+  --darkred: #681426;
+  --silver: #d7d1e1;
+  --muted: #a99bb9;
+  --glass: rgba(65,35,88,.48);
+  --border: rgba(215,209,225,.19);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Cairo', sans-serif;
+  background:
+    radial-gradient(ellipse at 50% 20%, #49216c 0%, transparent 48%),
+    linear-gradient(145deg,#170b25,#241034 55%,#12091e);
+  color: var(--silver);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* القائمة الجانبية */
+
+.sidebar {
+  width: 260px;
+  min-width: 260px;
+  height: 100vh;
+  position: fixed;
+  right: 0;
+  top: 0;
+  z-index: 20;
+  background: rgba(25,12,39,.92);
+  backdrop-filter: blur(22px);
+  border-left: 1px solid var(--border);
+  padding: 22px 15px;
+  overflow-y: auto;
+  transition: .3s;
+}
+
+.brand {
+  text-align: center;
+  padding: 12px 5px 22px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 20px;
+}
+
+.brand-symbol {
+  width: 65px;
+  height: 65px;
+  margin: auto auto 10px;
+  border: 2px solid #a75bca;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 28px;
+  color: #e5caff;
+  box-shadow: 0 0 25px #812ca766;
+}
+
+.brand h2 {
+  font-size: 20px;
+  letter-spacing: 2px;
+  color: white;
+}
+
+.brand p {
+  color: #b99bcf;
+  font-size: 11px;
+}
+
+.menu-title {
+  color: #9d83b4;
+  font-size: 11px;
+  margin: 15px 12px 8px;
+}
+
+.nav-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  background: transparent;
+  border: 1px solid transparent;
+  color: #c9bfd4;
+  padding: 11px 13px;
+  border-radius: 12px;
+  text-align: right;
+  font-size: 13px;
+  margin-bottom: 5px;
+  transition: .25s;
+}
+
+.nav-btn:hover {
+  background: rgba(132,63,161,.2);
+  border-color: var(--border);
+  color: white;
+}
+
+.nav-btn.active {
+  background: linear-gradient(100deg,#74152d,#a51d36);
+  border-color: #e4a5b0;
+  color: white;
+  box-shadow: 0 0 18px #a51d3644;
+}
+
+.nav-icon {
+  font-size: 17px;
+  width: 25px;
+  text-align: center;
+}
+
+.sidebar-footer {
+  margin-top: 25px;
+  padding: 13px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: #aa98bb;
+  font-size: 11px;
+  text-align: center;
+}
+
+/* المحتوى الرئيسي */
+
+.main {
+  width: calc(100% - 260px);
+  margin-right: 260px;
+  padding: 22px 25px 40px;
+  min-width: 0;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  background: var(--glass);
+  border: 1px solid var(--border);
+  border-radius: 17px;
+  padding: 13px 18px;
+  backdrop-filter: blur(15px);
+  margin-bottom: 22px;
+}
+
+.topbar-title {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.topbar-info {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  font-size: 11px;
+  color: #c5b6d1;
+}
+
+.status-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #d69a44;
+  margin-left: 5px;
+  box-shadow: 0 0 9px #d69a44;
+}
+
+.menu-toggle {
+  display: none;
+  background: #6e1830;
+  color: white;
+  border: 1px solid #c27b8b;
+  padding: 7px 12px;
+  border-radius: 9px;
+}
+
+/* الصفحات */
+
+.page {
+  display: none;
+  animation: appear .35s ease;
+}
+
+.page.active {
+  display: block;
+}
+
+@keyframes appear {
+  from {opacity:0;transform:translateY(9px);}
+  to {opacity:1;transform:translateY(0);}
+}
+
+.page-heading {
+  margin: 10px 0 20px;
+}
+
+.page-heading h1 {
+  font-size: 24px;
+  color: white;
+}
+
+.page-heading p {
+  color: var(--muted);
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+/* النواة المركزية */
+
+.hero {
+  position: relative;
+  min-height: 350px;
+  background:
+    radial-gradient(circle at center,#71349a55,transparent 55%),
+    linear-gradient(130deg,rgba(60,27,84,.8),rgba(28,13,42,.9));
+  border: 1px solid var(--border);
+  border-radius: 23px;
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.hero::before,
+.hero::after {
+  content: "";
+  position: absolute;
+  width: 280px;
+  height: 280px;
+  border: 1px solid #a25dc044;
+  border-radius: 50%;
+  animation: orbit 18s linear infinite;
+}
+
+.hero::after {
+  width: 350px;
+  height: 350px;
+  animation-direction: reverse;
+  border-color: #bd405144;
+}
+
+@keyframes orbit {
+  to {transform:rotate(360deg);}
+}
+
+.core {
+  width: 145px;
+  height: 145px;
+  border-radius: 50%;
+  position: relative;
+  z-index: 2;
+  background:
+    radial-gradient(circle at 35% 30%,#9b58cb,transparent 20%),
+    radial-gradient(circle at 60% 60%,#51216e,#100817 72%);
+  border: 2px solid #a66acb;
+  box-shadow:
+    0 0 20px #9b48d5,
+    0 0 55px #7130a5,
+    inset 0 0 25px #b75aff55;
+  animation: pulse 3s ease-in-out infinite;
+  display: grid;
+  place-items: center;
+  font-size: 43px;
+}
+
+@keyframes pulse {
+  50% {
+    box-shadow: 0 0 35px #bb65f5,
+    0 0 85px #7629a8,
+    inset 0 0 35px #bd79ff77;
+  }
+}
+
+.core-ring {
+  position: absolute;
+  width: 205px;
+  height: 65px;
+  border: 2px solid #b17bd1;
+  border-radius: 50%;
+  transform: rotate(-25deg);
+  z-index: 3;
+  pointer-events: none;
+}
+
+.core-ring.two {
+  transform: rotate(55deg);
+  border-color: #9d405a;
+}
+
+.hero h1 {
+  z-index: 4;
+  margin-top: 28px;
+  letter-spacing: 3px;
+  font-size: 23px;
+  color: white;
+}
+
+.hero p {
+  z-index: 4;
+  color: #c3a9d8;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+/* البطاقات والأزرار */
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(4,minmax(0,1fr));
+  gap: 13px;
+  margin: 20px 0;
+}
+
+.card {
+  background: var(--glass);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 17px;
+  backdrop-filter: blur(12px);
+  min-width: 0;
+}
+
+.stat-icon {font-size:23px;}
+
+.stat-label {
+  color: #b9a8c9;
+  font-size: 11px;
+  margin-top: 8px;
+}
+
+.stat-value {
+  font-size: 21px;
+  font-weight: 800;
+  color: white;
+  margin-top: 3px;
+}
+
+.section-title {
+  font-size: 16px;
+  margin: 24px 0 13px;
+  color: white;
+}
+
+.quick-actions {
+  display: grid;
+  grid-template-columns: repeat(3,minmax(0,1fr));
+  gap: 12px;
+}
+
+.action-btn {
+  background: linear-gradient(120deg,#a51d36,#71162c);
+  border: 1px solid #c78391;
+  color: white;
+  border-radius: 12px;
+  padding: 13px 8px;
+  font-size: 12px;
+  transition: .25s;
+}
+
+.action-btn:hover {
+  box-shadow: 0 0 20px #b51f3577;
+  transform: translateY(-2px);
+}
+
+.action-btn.secondary {
+  background: #3b2055;
+  border-color: #9674b0;
+}
+
+.action-btn.danger {
+  background: #641326;
+  border-color: #9c485a;
+}
+
+.activity {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 2px;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+  gap: 10px;
+}
+
+.muted {color:var(--muted);}
+
+.content-box {
+  background: var(--glass);
+  border: 1px solid var(--border);
+  border-radius: 17px;
+  padding: 20px;
+  margin-top: 15px;
+}
+
+.content-box h3 {
+  font-size: 15px;
+  margin-bottom: 8px;
+}
+
+.content-box p {
+  color: #bbaacb;
+  font-size: 12px;
+  line-height: 2;
+}
+
+.search {
+  width: 100%;
+  padding: 12px;
+  margin: 12px 0;
+  background: #1b1028;
+  color: white;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-family: inherit;
+}
+
+.placeholder {
+  text-align: center;
+  padding: 35px 15px;
+  color: #c0afd0;
+}
+
+.placeholder .big-icon {
+  font-size: 40px;
+  margin-bottom: 10px;
+}
+
+/* الإشعارات */
+
+.toast {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 50;
+  background: #351a49;
+  border: 1px solid #b65c75;
+  color: white;
+  padding: 13px 18px;
+  border-radius: 12px;
+  font-size: 12px;
+  box-shadow: 0 8px 30px #0006;
+  display: none;
+  max-width: calc(100% - 40px);
+}
+
+/* الهاتف */
+
+.overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: #08040bb3;
+  z-index: 15;
+}
+
+@media(max-width:1000px) {
+  .cards {grid-template-columns:repeat(2,1fr);}
+}
+
+@media(max-width:700px) {
+  .sidebar {
+    transform:translateX(110%);
+    width:275px;
+  }
+
+  .sidebar.open {transform:translateX(0);}
+
+  .overlay.show {display:block;}
+
+  .main {
+    width:100%;
+    margin-right:0;
+    padding:13px;
+  }
+
+  .menu-toggle {display:block;}
+
+  .topbar {padding:11px;}
+
+  .topbar-info {
+    gap:7px;
+    font-size:10px;
+  }
+
+  .hero {min-height:320px;}
+
+  .cards {gap:9px;}
+
+  .card {padding:12px;}
+
+  .quick-actions {
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .page-heading h1 {font-size:21px;}
+}
+</style>
+</head>
+
+<body>
+
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<div class="layout">
+
+<aside class="sidebar" id="sidebar">
+
+  <div class="brand">
+    <div class="brand-symbol">𖤍</div>
+    <h2>SHADOW BOT</h2>
+    <p>THE SEVEN SHADOWS</p>
+  </div>
+
+  <div class="menu-title">القائمة الرئيسية</div>
+
+  <nav id="navigation">
+    <button class="nav-btn active" data-page="home"><span class="nav-icon">🏰</span> الرئيسية</button>
+    <button class="nav-btn" data-page="installer"><span class="nav-icon">⚙️</span> التنصيب</button>
+    <button class="nav-btn" data-page="commands"><span class="nav-icon">📜</span> الأوامر</button>
+    <button class="nav-btn" data-page="sessions"><span class="nav-icon">📱</span> التحكم والجلسات</button>
+    <button class="nav-btn" data-page="automation"><span class="nav-icon">🔄</span> الأتمتة</button>
+    <button class="nav-btn" data-page="protection"><span class="nav-icon">🛡️</span> الحماية والمجموعات</button>
+    <button class="nav-btn" data-page="system"><span class="nav-icon">🎨</span> النظام والتخصيص</button>
+    <button class="nav-btn" data-page="backup"><span class="nav-icon">💾</span> النسخ الاحتياطي</button>
+    <button class="nav-btn" data-page="activity"><span class="nav-icon">📊</span> سجل النشاط</button>
+    <button class="nav-btn" data-page="guide"><span class="nav-icon">📖</span> الدليل والمساعدة</button>
+    <button class="nav-btn" data-page="support"><span class="nav-icon">🎧</span> الدعم الفني</button>
+    <button class="nav-btn" data-page="profile"><span class="nav-icon">👤</span> حسابي</button>
+    <button class="nav-btn" data-page="developer"><span class="nav-icon">👑</span> المطوّر</button>
+    <button class="nav-btn" data-page="admin"><span class="nav-icon">🔐</span> الإدارة التقنية</button>
+    <button class="nav-btn" data-page="guilds"><span class="nav-icon">⚔️</span> قسم النقابات</button>
+  </nav>
+
+  <div class="sidebar-footer">
+    SHADOW BOT © 2026
+    <br>
+    عالم الظلال يبدأ من هنا
+  </div>
+
+</aside>
+
+<main class="main">
+
+<header class="topbar">
+  <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+  <div class="topbar-title" id="currentTitle">الرئيسية</div>
+  <div class="topbar-info">
+    <span><i class="status-dot"></i> بانتظار الاتصال</span>
+    <span>الإصدار 1.0</span>
+  </div>
+</header>
+
+<!-- الصفحات الداخلية -->
+
+<!-- الرئيسية -->
+<section class="page active" id="home">
+  <div class="page-heading">
+    <h1>مركز الظلال</h1>
+    <p>مرحباً بك في لوحة تحكم SHADOW BOT</p>
+  </div>
+
+  <div class="hero">
+    <div class="core-ring"></div>
+    <div class="core-ring two"></div>
+    <div class="core">𖤍</div>
+    <h1>SHADOW CORE</h1>
+    <p>النواة المركزية — الحالة: IDLE</p>
+  </div>
+
+  <h2 class="section-title">إحصائيات النظام</h2>
+  <div class="cards">
+    <div class="card"><div class="stat-icon">⚡</div><div class="stat-label">مدة التشغيل</div><div class="stat-value">--</div></div>
+    <div class="card"><div class="stat-icon">📡</div><div class="stat-label">سرعة الاستجابة</div><div class="stat-value">--</div></div>
+    <div class="card"><div class="stat-icon">📱</div><div class="stat-label">الجلسات</div><div class="stat-value">0</div></div>
+    <div class="card"><div class="stat-icon">👥</div><div class="stat-label">المجموعات</div><div class="stat-value">0</div></div>
+  </div>
+
+  <h2 class="section-title">التحكم السريع</h2>
+  <div class="quick-actions">
+    <button class="action-btn" onclick="previewAction('تشغيل البوت')">▶ تشغيل البوت</button>
+    <button class="action-btn danger" onclick="previewAction('إيقاف البوت')">⏹ إيقاف البوت</button>
+    <button class="action-btn secondary" onclick="previewAction('إعادة الاتصال')">🔄 إعادة الاتصال</button>
+    <button class="action-btn" onclick="showPage('installer')">⚙️ التنصيب</button>
+    <button class="action-btn secondary" onclick="showPage('sessions')">📱 إدارة الجلسات</button>
+    <button class="action-btn secondary" onclick="previewAction('تحديث الحالة')">📊 تحديث الحالة</button>
+  </div>
+
+  <h2 class="section-title">آخر النشاطات</h2>
+  <div class="content-box">
+    <div class="activity"><span>النظام جاهز لبدء الاتصال</span><span class="muted">بانتظار التشغيل</span></div>
+    <div class="activity"><span>لوحة التحكم</span><span class="muted">تم فتح الواجهة</span></div>
+    <div class="activity"><span>حالة البيانات</span><span class="muted">معاينة تجريبية</span></div>
+  </div>
+</section>
+
+<!-- التنصيب -->
+<section class="page" id="installer">
+  <div class="page-heading"><h1>⚙️ تنصيب البوت</h1><p>إعداد SHADOW BOT خطوة بخطوة</p></div>
+  <div class="content-box">
+    <h3>مرحلة إعداد النظام</h3>
+    <p>ابدأ تجهيز إعدادات البوت ومراجعة متطلبات التشغيل.</p>
+    <div class="cards">
+      <div class="card"><div class="stat-icon">📦</div><div class="stat-label">ملفات المشروع</div><div class="stat-value">قيد الفحص</div></div>
+      <div class="card"><div class="stat-icon">🟢</div><div class="stat-label">متطلبات التشغيل</div><div class="stat-value">غير مفحوصة</div></div>
+    </div>
+    <button class="action-btn" onclick="previewAction('فحص متطلبات التنصيب')">بدء فحص المتطلبات</button>
+    <button class="action-btn secondary" onclick="previewAction('إعداد البوت')">إعداد البوت</button>
+    <button class="action-btn secondary" onclick="previewAction('مراجعة الإعدادات')">مراجعة الإعدادات</button>
+    <p class="muted">حالة التنصيب الفعلية تحتاج اتصالاً بالخادم.</p>
+  </div>
+</section>
+
+<!-- الأوامر -->
+<section class="page" id="commands">
+  <div class="page-heading"><h1>📜 أوامر الظلال</h1><p>دليل أوامر SHADOW BOT</p></div>
+  <input class="search" id="commandSearch" placeholder="ابحث عن أمر..." oninput="filterCommands()">
+  <div id="commandList">
+    <div class="content-box command-item"><h3>.ظلال</h3><p>عرض قائمة أقسام وأوامر البوت.</p></div>
+    <div class="content-box command-item"><h3>.دليل الظلال</h3><p>عرض دليل استخدام البوت.</p></div>
+    <div class="content-box command-item"><h3>.رتبتي</h3><p>عرض رتبتك في النقابة المحددة.</p></div>
+    <div class="content-box command-item"><h3>.نقاطي</h3><p>عرض رصيد نقاط الخبرة والذهب.</p></div>
+    <div class="content-box command-item"><h3>.ترتيب النقابة</h3><p>عرض ترتيب أعضاء النقابة.</p></div>
+    <div class="content-box command-item"><h3>.فعالية أنمي</h3><p>بدء فعالية تخمين الأنمي.</p></div>
+    <div class="content-box command-item"><h3>.فعالية سرعة</h3><p>بدء تحدي سرعة الكتابة.</p></div>
+    <div class="content-box command-item"><h3>.قتال @العضو</h3><p>تحدي عضو في نزال فردي.</p></div>
+  </div>
+</section>
+
+<!-- الجلسات -->
+<section class="page" id="sessions">
+  <div class="page-heading"><h1>📱 إدارة الجلسات</h1><p>إدارة اتصالات واتساب</p></div>
+  <div class="content-box">
+    <h3>الجلسات المتاحة</h3>
+    <p>لا توجد جلسات متصلة حالياً في المعاينة.</p>
+    <div class="activity"><span>الجلسة الرئيسية</span><span class="muted">غير متصل</span></div>
+    <button class="action-btn" onclick="previewAction('إضافة جلسة')">＋ إضافة جلسة</button>
+    <button class="action-btn secondary" onclick="previewAction('إعادة الاتصال')">إعادة الاتصال</button>
+  </div>
+</section>
+
+<!-- الأتمتة -->
+<section class="page" id="automation">
+  <div class="page-heading"><h1>🔄 الأتمتة</h1><p>إدارة المهام التلقائية</p></div>
+  <div class="content-box">
+    <h3>المهام التلقائية</h3>
+    <p>إعداد رسائل الترحيب والتذكيرات والمهام الإدارية المجدولة.</p>
+    <button class="action-btn" onclick="previewAction('إنشاء مهمة تلقائية')">＋ إنشاء مهمة</button>
+    <div class="activity"><span>رسائل الترحيب</span><span class="muted">غير مفعلة</span></div>
+    <div class="activity"><span>التذكيرات</span><span class="muted">غير مفعلة</span></div>
+  </div>
+</section>
+
+<!-- الحماية -->
+<section class="page" id="protection">
+  <div class="page-heading"><h1>🛡️ الحماية والمجموعات</h1><p>إعدادات حماية المجموعات</p></div>
+  <div class="content-box">
+    <h3>أنظمة الحماية</h3>
+    <div class="activity"><span>مكافحة الرسائل المتكررة</span><span class="muted">غير مفعلة</span></div>
+    <div class="activity"><span>مكافحة الروابط</span><span class="muted">غير مفعلة</span></div>
+    <div class="activity"><span>إدارة صلاحيات المشرفين</span><span class="muted">غير مفعلة</span></div>
+    <button class="action-btn" onclick="previewAction('إعدادات الحماية')">إعداد الحماية</button>
+  </div>
+</section>
+
+<!-- النظام والتخصيص -->
+<section class="page" id="system">
+  <div class="page-heading"><h1>🎨 النظام والتخصيص</h1><p>تخصيص تجربة لوحة التحكم</p></div>
+  <div class="content-box">
+    <h3>إعدادات المظهر</h3>
+    <p>الهوية الحالية: بنفسجي، أحمر داكن، فضي.</p>
+    <div class="activity"><span>المظهر الزجاجي</span><span class="muted">مفعل في المعاينة</span></div>
+    <div class="activity"><span>مؤثرات النواة</span><span class="muted">مفعلة في المعاينة</span></div>
+    <button class="action-btn" onclick="previewAction('تخصيص المظهر')">تخصيص المظهر</button>
+  </div>
+</section>
+
+<!-- النسخ الاحتياطي -->
+<section class="page" id="backup">
+  <div class="page-heading"><h1>💾 النسخ الاحتياطي</h1><p>إدارة نسخ بيانات النظام</p></div>
+  <div class="content-box">
+    <h3>مركز النسخ الاحتياطي</h3>
+    <p>يمكن ربط إنشاء النسخ واستعادتها بالخادم لاحقاً.</p>
+    <button class="action-btn" onclick="previewAction('إنشاء نسخة احتياطية')">إنشاء نسخة</button>
+    <button class="action-btn secondary" onclick="previewAction('فحص النسخ الاحتياطية')">فحص النسخ</button>
+    <p class="muted">لا تُحفظ كلمات المرور أو مفاتيح API أو بيانات مصادقة واتساب ضمن النسخ.</p>
+  </div>
+</section>
+
+<!-- سجل النشاط -->
+<section class="page" id="activity">
+  <div class="page-heading"><h1>📊 سجل النشاط</h1><p>متابعة أحداث النظام</p></div>
+  <div class="content-box">
+    <h3>سجل الأحداث</h3>
+    <div class="activity"><span>فتح لوحة التحكم</span><span class="muted">معاينة</span></div>
+    <div class="activity"><span>تحميل واجهة النظام</span><span class="muted">معاينة</span></div>
+    <div class="activity"><span>الاتصال بالخادم</span><span class="muted">لم يبدأ</span></div>
+  </div>
+</section>
+
+<!-- الدليل -->
+<section class="page" id="guide">
+  <div class="page-heading"><h1>📖 الدليل والمساعدة</h1><p>تعرف على طريقة استخدام النظام</p></div>
+  <input class="search" placeholder="ابحث في الدليل...">
+  <div class="content-box">
+    <h3>كيف تبدأ؟</h3>
+    <p>1. افتح قسم التنصيب.</p>
+    <p>2. افحص متطلبات التشغيل.</p>
+    <p>3. اربط جلسة واتساب من خلال الخادم.</p>
+    <p>4. تابع حالة البوت من الصفحة الرئيسية.</p>
+  </div>
+</section>
+
+<!-- الدعم الفني -->
+<section class="page" id="support">
+  <div class="page-heading"><h1>🎧 الدعم الفني</h1><p>مركز المساعدة والدعم</p></div>
+  <div class="content-box">
+    <h3>إرسال طلب دعم</h3>
+    <input class="search" placeholder="عنوان المشكلة">
+    <textarea class="search" rows="5" placeholder="اكتب تفاصيل المشكلة..."></textarea>
+    <button class="action-btn" onclick="previewAction('إرسال طلب الدعم')">إرسال الطلب</button>
+  </div>
+</section>
+
+<!-- حسابي -->
+<section class="page" id="profile">
+  <div class="page-heading"><h1>👤 حسابي</h1><p>ملفك الشخصي وإعدادات الحساب</p></div>
+  <div class="content-box">
+    <div class="placeholder">
+      <div class="big-icon">👤</div>
+      <h3>ملف العضو</h3>
+      <p>بيانات الحساب ستظهر بعد تسجيل الدخول.</p>
+    </div>
+  </div>
+</section>
+
+<!-- المطور -->
+<section class="page" id="developer">
+  <div class="page-heading"><h1>👑 المطوّر</h1><p>معلومات المطوّر الرسمية</p></div>
+  <div class="content-box">
+    <h3>SHADOW BOT DEVELOPER</h3>
+    <p>اسم المطوّر: لم تتم إضافته بعد.</p>
+    <p>رقم التواصل: لم تتم إضافته بعد.</p>
+    <p>قناة واتساب: لم تتم إضافة الرابط بعد.</p>
+  </div>
+</section>
+
+<!-- الإدارة التقنية -->
+<section class="page" id="admin">
+  <div class="page-heading"><h1>🔐 الإدارة التقنية</h1><p>لوحة إدارة النظام</p></div>
+  <div class="content-box">
+    <h3>منطقة الإدارة</h3>
+    <p>هذه الصفحة واجهة تجريبية فقط. لا تمنح صلاحيات إدارية فعلية قبل إضافة تسجيل دخول موثوق والتحقق من الصلاحيات على الخادم.</p>
+    <button class="action-btn danger" onclick="previewAction('تسجيل دخول الإدارة')">دخول الإدارة</button>
+  </div>
+</section>
+
+<!-- النقابات -->
+<section class="page" id="guilds">
+  <div class="page-heading"><h1>⚔️ SHADOW GUILDS</h1><p>عالم النقابات والفعاليات والحروب</p></div>
+  <div class="cards">
+    <div class="card"><div class="stat-icon">🏰</div><div class="stat-label">النقابات</div><div class="stat-value">0</div></div>
+    <div class="card"><div class="stat-icon">⚔️</div><div class="stat-label">الحروب</div><div class="stat-value">0</div></div>
+    <div class="card"><div class="stat-icon">🎮</div><div class="stat-label">الفعاليات</div><div class="stat-value">0</div></div>
+    <div class="card"><div class="stat-icon">🪙</div><div class="stat-label">الذهب</div><div class="stat-value">0</div></div>
+  </div>
+  <div class="content-box">
+    <h3>مركز النقابات</h3>
+    <p>إدارة النقابات والأعضاء والرتب والخزائن والفعاليات ونظام الحروب.</p>
+    <button class="action-btn" onclick="previewAction('إنشاء نقابة')">إنشاء نقابة</button>
+    <button class="action-btn secondary" onclick="previewAction('عرض ترتيب النقابات')">ترتيب النقابات</button>
+    <button class="action-btn secondary" onclick="previewAction('فتح متجر الظلال')">متجر الظلال</button>
+  </div>
+  <div class="content-box">
+    <h3>نظام الرتب</h3>
+    <div class="activity"><span>المبتدئ</span><span class="muted">0 – 500 خبرة</span></div>
+    <div class="activity"><span>المحارب</span><span class="muted">501 – 1500 خبرة</span></div>
+    <div class="activity"><span>الفارس المظلم</span><span class="muted">1501 – 3500 خبرة</span></div>
+    <div class="activity"><span>القائد</span><span class="muted">3501 – 7000 خبرة</span></div>
+    <div class="activity"><span>سيد الظلال</span><span class="muted">7001+ خبرة</span></div>
+  </div>
+</section>
+
+<!-- منطقة الإشعارات -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* التنقل بين صفحات الموقع */
+
+const navButtons = document.querySelectorAll('.nav-btn');
+const pages = document.querySelectorAll('.page');
+const currentTitle = document.getElementById('currentTitle');
+
+function showPage(pageId) {
+  const target = document.getElementById(pageId);
+
+  if (!target) return;
+
+  pages.forEach(page => {
+    page.classList.remove('active');
+  });
+
+  navButtons.forEach(button => {
+    button.classList.remove('active');
+  });
+
+  target.classList.add('active');
+
+  const selectedButton = document.querySelector(
+    '.nav-btn[data-page="' + pageId + '"]'
+  );
+
+  if (selectedButton) {
+    selectedButton.classList.add('active');
+    currentTitle.textContent =
+      selectedButton.textContent.trim();
+  }
+
+  closeMenu();
+
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  });
+}
+
+/* ربط أزرار القائمة */
+
+navButtons.forEach(button => {
+  button.addEventListener('click', () => {
+    showPage(button.dataset.page);
+  });
+});
+
+/* القائمة الجانبية للموبايل */
+
+function toggleMenu() {
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('overlay');
+
+  sidebar.classList.toggle('open');
+  overlay.classList.toggle('show');
+}
+
+function closeMenu() {
+  document.getElementById('sidebar')
+    .classList.remove('open');
+
+  document.getElementById('overlay')
+    .classList.remove('show');
+}
+
+/* الإشعارات */
+
+let toastTimer;
+
+function showToast(message) {
+  const toast = document.getElementById('toast');
+
+  toast.textContent = message;
+  toast.style.display = 'block';
+
+  clearTimeout(toastTimer);
+
+  toastTimer = setTimeout(() => {
+    toast.style.display = 'none';
+  }, 3000);
+}
+
+/* معاينة الأزرار */
+
+function previewAction(action) {
+  showToast(
+    'هذه معاينة فقط — "' + action +
+    '" يحتاج ربط الخادم لتنفيذه فعلياً.'
+  );
+}
+
+/* البحث في الأوامر */
+
+function filterCommands() {
+  const searchInput =
+    document.getElementById('commandSearch');
+
+  if (!searchInput) return;
+
+  const searchValue =
+    searchInput.value.trim().toLowerCase();
+
+  const commands =
+    document.querySelectorAll('.command-item');
+
+  commands.forEach(command => {
+    const commandText =
+      command.textContent.toLowerCase();
+
+    command.style.display =
+      commandText.includes(searchValue)
+        ? 'block'
+        : 'none';
+  });
+}
+
+/* إغلاق القائمة بزر Escape */
+
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape') {
+    closeMenu();
+  }
+});
+
+/* حالة المعاينة */
+
+console.log('SHADOW BOT Dashboard Loaded');
+console.log('حالة النواة: IDLE');
+console.log('عدد الصفحات:', pages.length);
+
+</script>
+
+</main>
+</div>
+
+</body>
+</html>
